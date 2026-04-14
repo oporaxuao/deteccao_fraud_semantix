@@ -155,7 +155,7 @@ pip install pandas numpy scikit-learn imbalanced-learn xgboost matplotlib seabor
 # faça o download e coloque fraudTrain.csv e fraudTest.csv na raiz do projeto
 
 # executar o notebook
-jupyter notebook Semantix_v4.ipynb
+jupyter notebook Semantix.ipynb
 ```
 
 ---
