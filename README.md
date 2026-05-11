@@ -1,115 +1,101 @@
-# Detecção de Fraudes em Transações de Cartão de Crédito
+# 💳 Credit Card Fraud Detection with XGBoost
 
-Projeto de Parceria EBAC x Semantix — pipeline completo de machine learning para detecção de fraudes,
-com foco em impacto financeiro real para o negócio.
-
-**Resultado final:** saldo líquido de +USD 866.004 no conjunto de teste, com apenas 224 bloqueios
-indevidos e Precision de 88%.
+End-to-end machine learning pipeline for real-time fraud detection in financial transactions, built in partnership with EBAC and Semantix. The final model achieved a projected net balance of **+USD 866,004** on the test set.
 
 ---
 
-## O problema
+## 🎯 Business Objective
 
-O mercado de pagamentos digitais brasileiro movimenta trilhões de reais por ano. Empresas como
-PicPay, BoaVista e Travelex lidam diariamente com o desafio de identificar transações fraudulentas
-em tempo real — sem bloquear clientes legítimos e sem impactar a experiência do usuário.
+The Brazilian digital payments market processes trillions of reais annually. Companies like PicPay, BoaVista, and Travelex face the daily challenge of identifying fraudulent transactions in real time — without blocking legitimate customers or disrupting the user experience.
 
-Regras manuais não escalam. Um modelo que aprende padrões comportamentais diretamente dos dados é
-fundamentalmente superior.
+Manual rule-based systems don't scale. A model that learns behavioral patterns directly from data is fundamentally superior. The core business problem: **every dollar matters on both sides of the equation** — missed fraud costs money, but so does a false positive that blocks a legitimate transaction.
 
 ---
 
-## Dataset
+## 📂 Dataset
 
-- **Fonte:** [Credit Card Transactions Fraud Detection Dataset — Kaggle](https://www.kaggle.com/datasets/kartik2112/fraud-detection)
-- **Licença:** ODbL (Open Database License)
-- **Treino:** 1.296.675 transações
-- **Teste:** 555.719 transações
-- **Desbalanceamento:** 99,42% legítimas / 0,58% fraudes (razão 171:1)
+| Attribute | Detail |
+|---|---|
+| Source | [Credit Card Transactions Fraud Detection — Kaggle](https://www.kaggle.com/datasets/kartik2112/fraud-detection) |
+| License | ODbL (Open Database License) |
+| Training set | 1,296,675 transactions |
+| Test set | 555,719 transactions |
+| Class imbalance | 99.42% legitimate / 0.58% fraud (ratio 171:1) |
 
 ---
 
-## Pipeline
+## 🗂️ Pipeline
 
 ```
-Dados brutos
+Raw data
     │
-    ├── EDA (distribuição, valor, categoria, faixa etária)
+    ├── EDA (distribution, transaction value, category, age group)
     │
-    ├── Pré-processamento
-    │       ├── Remoção de colunas irrelevantes
-    │       ├── Feature engineering (idade, hora, dia_semana, distancia)
-    │       └── Label Encoding das categóricas
+    ├── Preprocessing
+    │       ├── Removal of irrelevant columns
+    │       ├── Feature engineering (age, hour, day_of_week, distance)
+    │       └── Label Encoding for categorical variables
     │
-    ├── Balanceamento
-    │       ├── Estratégia 1: SMOTE + Undersampling
-    │       └── Estratégia 2: scale_pos_weight (vencedor)
+    ├── Class Balancing
+    │       ├── Strategy 1: SMOTE + Undersampling
+    │       └── Strategy 2: scale_pos_weight (winner)
     │
-    ├── Modelagem
-    │       ├── Árvore de Decisão (baseline)
+    ├── Modeling
+    │       ├── Decision Tree (baseline)
     │       ├── XGBoost + SMOTE
     │       └── XGBoost + scale_pos_weight
     │
-    ├── Avaliação
-    │       ├── Métricas (Precision, Recall, F1, AUC-ROC)
-    │       ├── Matrizes de confusão
-    │       ├── Curva Precision-Recall e análise de threshold
-    │       └── Impacto financeiro (saldo líquido)
+    ├── Evaluation
+    │       ├── Metrics (Precision, Recall, F1, AUC-ROC)
+    │       ├── Confusion matrices
+    │       ├── Precision-Recall curve and threshold analysis
+    │       └── Financial impact (net balance)
     │
     ├── Cross-Validation (Stratified K-Fold, 5 folds)
     │
-    └── Otimização de Hiperparâmetros (RandomizedSearchCV)
+    └── Hyperparameter Optimization (RandomizedSearchCV)
 ```
 
 ---
 
-## Resultados
+## 📊 Results
 
-### Comparação dos modelos
+### Model Comparison
 
-| Modelo | Precision | Recall | F1 | AUC-ROC |
+| Model | Precision | Recall | F1 | AUC-ROC |
 |---|---|---|---|---|
-| Árvore de Decisão | 0.16 | 0.93 | 0.27 | 0.9842 |
+| Decision Tree | 0.16 | 0.93 | 0.27 | 0.9842 |
 | XGBoost SMOTE | 0.19 | 0.90 | 0.32 | 0.9892 |
 | XGBoost scale_pos_weight | 0.28 | 0.95 | 0.43 | 0.9972 |
-| **XGBoost SPW otimizado** | **0.78** | **0.81** | **0.79** | **0.9931** |
+| **XGBoost SPW optimized** | **0.78** | **0.81** | **0.79** | **0.9931** |
 
-### Impacto financeiro por cenário
+### Financial Impact by Scenario
 
-| Cenário | Fraudes evitadas | Legítimas bloqueadas | Saldo líquido |
+| Scenario | Fraud prevented | Legitimate blocked | Net balance |
 |---|---|---|---|
-| SMOTE, threshold 0.5 | USD 1.122.095 | USD 2.050.334 | **-USD 928.239** |
-| SMOTE, threshold 0.97 | USD 988.132 | USD 329.820 | **+USD 658.312** |
-| SPW, threshold 0.5 | USD 1.122.442 | USD 1.810.154 | **-USD 687.712** |
-| SPW, threshold 0.98 | USD 998.614 | USD 183.964 | **+USD 814.651** |
-| **SPW otimizado, threshold 0.85** | **USD 1.009.028** | **USD 143.024** | **+USD 866.004** |
+| SMOTE, threshold 0.5 | USD 1,122,095 | USD 2,050,334 | **-USD 928,239** |
+| SMOTE, threshold 0.97 | USD 988,132 | USD 329,820 | **+USD 658,312** |
+| SPW, threshold 0.5 | USD 1,122,442 | USD 1,810,154 | **-USD 687,712** |
+| SPW, threshold 0.98 | USD 998,614 | USD 183,964 | **+USD 814,651** |
+| **SPW optimized, threshold 0.85** | **USD 1,009,028** | **USD 143,024** | **+USD 866,004** |
 
 ---
 
-## Principais descobertas
+## 💡 Key Findings
 
-- **Acurácia não é a métrica certa.** Com 99,42% de legítimas, qualquer modelo que classifica tudo
-como legítimo teria 99,42% de Acurácia — e detectaria zero fraudes.
-
-- **SMOTE gera saldo negativo com threshold padrão.** A síntese artificial de dados cria fronteiras
-de decisão mais agressivas, bloqueando legítimas em excesso.
-
-- **scale_pos_weight supera SMOTE em todas as métricas.** Treinar nos dados reais com penalização
-assimétrica produz padrões mais precisos e menos falsos positivos.
-
-- **O threshold é uma decisão de negócio.** O mesmo modelo com threshold 0.5 tem saldo -USD 688k;
-com threshold 0.85 tem saldo +USD 866k. A diferença é de USD 1,55 milhão.
-
-- **amt responde por 50% da importância do modelo.** Fraudadores concentram ataques em transações
-de alto valor, especialmente nas categorias shopping_net e misc_net.
+- **Accuracy is the wrong metric.** With 99.42% legitimate transactions, a model that classifies everything as legitimate would achieve 99.42% accuracy — and catch zero fraud.
+- **SMOTE produces a negative balance at default threshold.** Synthetic data generation creates more aggressive decision boundaries, blocking too many legitimate transactions.
+- **scale_pos_weight outperforms SMOTE across all metrics.** Training on real data with asymmetric penalization produces more precise patterns and fewer false positives.
+- **Threshold is a business decision.** The same model with threshold 0.5 yields -USD 688k; with threshold 0.85 it yields +USD 866k. A difference of USD 1.55 million from a single parameter.
+- **`amt` accounts for 50% of model importance.** Fraudsters concentrate attacks on high-value transactions, especially in `shopping_net` and `misc_net` categories.
 
 ---
 
-## Modelo final recomendado
+## 🏆 Final Recommended Model
 
-**XGBoost com scale_pos_weight otimizado, threshold 0.85**
+**XGBoost with optimized scale_pos_weight, threshold 0.85**
 
-| Hiperparâmetro | Valor |
+| Hyperparameter | Value |
 |---|---|
 | `n_estimators` | 200 |
 | `max_depth` | 8 |
@@ -122,44 +108,37 @@ de alto valor, especialmente nas categorias shopping_net e misc_net.
 
 ---
 
-## Tecnologias
+## 🛠️ Tech Stack
 
-- Python 3.10
-- pandas, numpy
-- scikit-learn
-- imbalanced-learn
-- XGBoost
-- matplotlib, seaborn
-
----
-
-## Estrutura do repositório
-
-```
-├── Semantix.ipynb      # Notebook principal
-├── fraudTrain.csv         # Dataset de treino (download via Kaggle)
-├── fraudTest.csv          # Dataset de teste (download via Kaggle)
-└── README.md
-```
+| Category | Tools |
+|---|---|
+| Language | Python 3.10 |
+| Data Manipulation | Pandas, NumPy |
+| Machine Learning | Scikit-learn, XGBoost |
+| Class Balancing | Imbalanced-learn (SMOTE) |
+| Visualization | Matplotlib, Seaborn |
+| Environment | Jupyter Notebook |
 
 ---
 
-## Como executar
+## ▶️ How to Run
 
 ```bash
-# instalar dependências
-pip install pandas numpy scikit-learn imbalanced-learn xgboost matplotlib seaborn
+# Install dependencies
+pip install pandas numpy scikit-learn imbalanced-learn xgboost matplotlib seaborn jupyter
 
-# baixar o dataset
-# acesse https://www.kaggle.com/datasets/kartik2112/fraud-detection
-# faça o download e coloque fraudTrain.csv e fraudTest.csv na raiz do projeto
+# Download the dataset
+# Go to https://www.kaggle.com/datasets/kartik2112/fraud-detection
+# Place fraudTrain.csv and fraudTest.csv in the project root
 
-# executar o notebook
+# Launch the notebook
 jupyter notebook Semantix.ipynb
 ```
 
 ---
 
-**Autor:** João Alfredo de Sousa Siqueira  
-**Curso:** Cientista de Dados — EBAC  
-**Parceria:** Semantix  
+## 👤 Author
+
+**João Alfredo de Sousa Siqueira**
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-oporaxuao-blue)](https://linkedin.com/in/oporaxuao)
+[![GitHub](https://img.shields.io/badge/GitHub-oporaxuao-black)](https://github.com/oporaxuao)
